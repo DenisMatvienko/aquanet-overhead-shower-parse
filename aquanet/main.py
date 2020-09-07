@@ -6,7 +6,7 @@ from mixin.page_data_mixin import PageDataMixin, MainPageData
 """ Header of csv file outside iteration"""
 with open('aquanet.csv', 'w') as f:
     writer = csv.writer(f)
-    writer.writerow(['Код', 'Артикул', 'Бренд', 'Коллекция', 'Установка', 'Ширина', 'Высота',
+    writer.writerow(['Наименование', 'Код', 'Артикул', 'Бренд', 'Коллекция', 'Установка', 'Ширина', 'Высота',
                      'Глубина', 'Материал', 'Дизайн', 'Цвет', 'Миксер', 'Гибкая подводка', 'Режимы', 'Радиус',
                      'Термостат', 'Размер верхнего душа', 'Вес', 'Режимы верхнего душа', 'URL'])
 
@@ -42,7 +42,8 @@ def write_csv(data):
     """ Write data after pars """
     with open('aquanet.csv', 'a') as f:
         writer = csv.writer(f)
-        writer.writerow([data['uls_code'],
+        writer.writerow([data['name'],
+                         data['uls_code'],
                          data['art'],
                          data['brand'],
                          data['collections'],
@@ -88,6 +89,7 @@ def get_page_data(response):
         soup = BeautifulSoup(html, 'lxml')
 
         """ Get properties from each pages """
+        name = soup.find('div', id='content').select_one('h1').text.strip()
         uls_code = PageDataMixin(soup.select_one, {'data-id': '470'}).find_paragraph()
         art = PageDataMixin(soup.select_one, {'data-id': '125'}).find_paragraph()
         brand = PageDataMixin(soup.select_one, {'data-id': '126'}).find_links()
@@ -109,7 +111,8 @@ def get_page_data(response):
         watering_mode_top = PageDataMixin(soup.select_one, {'data-id': '303'}).find_paragraph()
 
         # Write data to dict and get to the write csv func
-        data = {'uls_code': uls_code,
+        data = {'name': name,
+                'uls_code': uls_code,
                 'art': art,
                 'brand': brand,
                 'collections': collections,
