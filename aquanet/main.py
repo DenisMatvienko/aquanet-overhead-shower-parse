@@ -88,7 +88,11 @@ def get_page_data(response):
         html = r.text
         soup = BeautifulSoup(html, 'lxml')
 
+        img_parse_url = []
+
         """ Get properties from each pages """
+        img = soup.find('div', id='item_images_big').select_one('img').get('data-lazy')
+        img_parse_url.append('https://www.aquanet.ru' + img)
         name = soup.find('div', id='content').select_one('h1').text.strip()
         uls_code = PageDataMixin(soup.select_one, {'data-id': '470'}).find_paragraph()
         art = PageDataMixin(soup.select_one, {'data-id': '125'}).find_paragraph()
